@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart'; // note lowercase file name
+import 'screens/home_screen.dart'; 
 
 void main() {
   runApp(const KrishiApp());
