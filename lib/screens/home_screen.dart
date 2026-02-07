@@ -7,6 +7,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFFF0F4F0),
+
       // 🟢 Floating Bottom Navigation Bar
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(20),
@@ -24,16 +25,17 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: [
-            _buildNavItem(Icons.home_rounded, true),
-            _buildNavItem(Icons.analytics_outlined, false),
-            _buildNavItem(Icons.person_outline_rounded, false),
+          children: const [
+            _HoverNavIcon(icon: Icons.home_rounded, isActive: true),
+            _HoverNavIcon(icon: Icons.info_outline_rounded),
+            _HoverNavIcon(icon: Icons.person_outline_rounded),
           ],
         ),
       ),
+
       body: Stack(
         children: [
-          // 🌿 Top Decorative Header
+          // 🌿 Header
           Container(
             height: 220,
             decoration: BoxDecoration(
@@ -57,26 +59,25 @@ class HomeScreen extends StatelessWidget {
                       color: Colors.white,
                       fontSize: 26,
                       fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
                     ),
                   ),
-                  SizedBox(height: 5),
+                  SizedBox(height: 6),
                   Text(
                     "আপনার ফসলের জন্য সেরা পরামর্শ",
-                    style: TextStyle(color: Colors.white70, fontSize: 14),
+                    style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
             ),
           ),
 
-          // 📱 Main Content Area
+          // 📱 Content
           Padding(
             padding: const EdgeInsets.only(top: 180, left: 20, right: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // 🔔 Premium Alert Box
+                  // 🔔 Alert
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                     decoration: BoxDecoration(
@@ -86,21 +87,17 @@ class HomeScreen extends StatelessWidget {
                         BoxShadow(
                           color: Colors.red.withOpacity(0.1),
                           blurRadius: 20,
-                          spreadRadius: 2,
                         )
                       ],
-                      border: Border.all(color: Colors.red.shade100, width: 1),
+                      border: Border.all(color: Colors.red.shade100),
                     ),
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: const BoxDecoration(
-                            color: Colors.red,
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(Icons.notifications_active, color: Colors.white, size: 18),
+                        const CircleAvatar(
+                          radius: 14,
+                          backgroundColor: Colors.red,
+                          child: Icon(Icons.notifications_active, color: Colors.white, size: 16),
                         ),
                         const SizedBox(width: 12),
                         Text(
@@ -108,7 +105,6 @@ class HomeScreen extends StatelessWidget {
                           style: TextStyle(
                             color: Colors.red.shade700,
                             fontWeight: FontWeight.bold,
-                            fontSize: 14,
                           ),
                         ),
                       ],
@@ -117,7 +113,7 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // 🎛 Feature Grid
+                  // 🎛 Feature Grid (HOVER ENABLED)
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -125,31 +121,30 @@ class HomeScreen extends StatelessWidget {
                     crossAxisSpacing: 18,
                     mainAxisSpacing: 18,
                     childAspectRatio: 1.1,
-                    children: [
-                      _buildCuteCard("রোগ শনাক্তকরণ", Icons.camera_rounded, Colors.orange),
-                      _buildCuteCard("আবহাওয়া", Icons.wb_cloudy_rounded, Colors.blue),
-                      _buildCuteCard("পরামর্শ", Icons.face_retouching_natural, Colors.teal),
-                      _buildCuteCard("জ্ঞানভান্ডার", Icons.auto_stories_rounded, Colors.brown),
+                    children: const [
+                      HoverCard(title: "রোগ শনাক্তকরণ", icon: Icons.camera_rounded, color: Colors.orange),
+                      HoverCard(title: "আবহাওয়া", icon: Icons.wb_cloudy_rounded, color: Colors.blue),
+                      HoverCard(title: "পরামর্শ", icon: Icons.face_retouching_natural, color: Colors.teal),
+                      HoverCard(title: "জ্ঞানভান্ডার", icon: Icons.auto_stories_rounded, color: Colors.brown),
                     ],
                   ),
 
                   const SizedBox(height: 30),
 
-                  // 💡 Added Design: "Daily Tip" Section
+                  // 💡 Tip
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "আজকের টিপস",
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 15,
                         fontWeight: FontWeight.bold,
                         color: Colors.green.shade900,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 10),
                   Container(
-                    width: double.infinity,
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
@@ -160,18 +155,18 @@ class HomeScreen extends StatelessWidget {
                     ),
                     child: Row(
                       children: [
-                        Icon(Icons.lightbulb_outline, color: Colors.orange.shade700, size: 30),
+                        Icon(Icons.lightbulb_outline, color: Colors.orange.shade700, size: 25),
                         const SizedBox(width: 15),
                         const Expanded(
                           child: Text(
                             "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
-                            style: TextStyle(fontSize: 14, color: Colors.black87),
                           ),
                         ),
                       ],
                     ),
                   ),
-                  const SizedBox(height: 100), // Space for bottom nav
+
+                  const SizedBox(height: 100),
                 ],
               ),
             ),
@@ -180,47 +175,109 @@ class HomeScreen extends StatelessWidget {
       ),
     );
   }
+}
 
-  Widget _buildCuteCard(String title, IconData icon, Color color) {
-    return Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: color.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 8),
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Container(
-            height: 50,
-            width: 50,
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
+//////////////////////////////////////////////////////////////
+// 🧩 HOVER CARD
+//////////////////////////////////////////////////////////////
+class HoverCard extends StatefulWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+
+  const HoverCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  State<HoverCard> createState() => _HoverCardState();
+}
+
+class _HoverCardState extends State<HoverCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        transform: isHovered ? Matrix4.translationValues(0, -6, 0) : Matrix4.identity(),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: widget.color.withOpacity(isHovered ? 0.25 : 0.08),
+              blurRadius: isHovered ? 25 : 15,
+              offset: const Offset(0, 10),
             ),
-            child: Icon(icon, color: color, size: 55),
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedScale(
+              scale: isHovered ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 250),
+              child: CircleAvatar(
+                radius: 26,
+                backgroundColor: widget.color.withOpacity(0.15),
+                child: Icon(widget.icon, color: widget.color, size: 28),
+              ),
+            ),
+            const SizedBox(height: 10),
+            Text(
+              widget.title,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  Widget _buildNavItem(IconData icon, bool isActive) {
-    return Icon(
-      icon,
-      color: isActive ? Colors.green.shade700 : Colors.grey.shade400,
-      size: 28,
+//////////////////////////////////////////////////////////////
+// 🔘 HOVER NAV ICON
+//////////////////////////////////////////////////////////////
+class _HoverNavIcon extends StatefulWidget {
+  final IconData icon;
+  final bool isActive;
+
+  const _HoverNavIcon({
+    required this.icon,
+    this.isActive = false,
+  });
+
+  @override
+  State<_HoverNavIcon> createState() => _HoverNavIconState();
+}
+
+class _HoverNavIconState extends State<_HoverNavIcon> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedScale(
+        scale: isHovered ? 1.2 : 1.0,
+        duration: const Duration(milliseconds: 200),
+        child: Icon(
+          widget.icon,
+          size: 28,
+          color: widget.isActive || isHovered
+              ? Colors.green.shade700
+              : Colors.grey.shade400,
+        ),
+      ),
     );
   }
 }
