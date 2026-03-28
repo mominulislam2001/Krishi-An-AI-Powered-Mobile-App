@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'advisory_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -56,10 +57,9 @@ class HomeScreen extends StatelessWidget {
                   Text(
                     "কৃষি সহায়তা",
                     style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                        color: Colors.white,
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 6),
                   Text(
@@ -71,23 +71,20 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
 
-          // 📱 Content
+          // 📱 Main Content Area
           Padding(
             padding: const EdgeInsets.only(top: 180, left: 20, right: 20),
             child: SingleChildScrollView(
               child: Column(
                 children: [
-                  // 🔔 Alert
+                  // 🔔 Alert Banner
                   Container(
                     padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
                     decoration: BoxDecoration(
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       boxShadow: [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(0.1),
-                          blurRadius: 20,
-                        )
+                        BoxShadow(color: Colors.red.withOpacity(0.1), blurRadius: 20)
                       ],
                       border: Border.all(color: Colors.red.shade100),
                     ),
@@ -103,9 +100,8 @@ class HomeScreen extends StatelessWidget {
                         Text(
                           "জরুরি সতর্কতা: আজ স্প্রে করবেন না",
                           style: TextStyle(
-                            color: Colors.red.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
+                              color: Colors.red.shade700,
+                              fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -113,7 +109,7 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  // 🎛 Feature Grid (HOVER ENABLED)
+                  // 🎛 Feature Grid
                   GridView.count(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -121,46 +117,46 @@ class HomeScreen extends StatelessWidget {
                     crossAxisSpacing: 18,
                     mainAxisSpacing: 18,
                     childAspectRatio: 1.1,
-                    children: const [
+                    children: [
                       HoverCard(title: "রোগ শনাক্তকরণ", icon: Icons.camera_rounded, color: Colors.orange),
                       HoverCard(title: "আবহাওয়া", icon: Icons.wb_cloudy_rounded, color: Colors.blue),
-                      HoverCard(title: "পরামর্শ", icon: Icons.face_retouching_natural, color: Colors.teal),
+                      GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => AdvisoryScreen()),
+                          );
+                        },
+                        child: HoverCard(title: "পরামর্শ", icon: Icons.face_retouching_natural, color: Colors.teal),
+                      ),
                       HoverCard(title: "জ্ঞানভান্ডার", icon: Icons.auto_stories_rounded, color: Colors.brown),
                     ],
                   ),
 
                   const SizedBox(height: 30),
 
-                  // 💡 Tip
+                  // 💡 Tip Section
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
                       "আজকের টিপস",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade900,
-                      ),
+                      style: TextStyle(fontSize: 15, fontWeight: FontWeight.bold, color: Colors.green.shade900),
                     ),
                   ),
                   const SizedBox(height: 10),
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
-                      gradient: LinearGradient(
-                        colors: [Colors.white, Colors.green.shade50],
-                      ),
+                      color: Colors.white,
                       borderRadius: BorderRadius.circular(20),
                       border: Border.all(color: Colors.green.shade100),
                     ),
-                    child: Row(
+                    child: const Row(
                       children: [
-                        Icon(Icons.lightbulb_outline, color: Colors.orange.shade700, size: 25),
-                        const SizedBox(width: 15),
-                        const Expanded(
-                          child: Text(
-                            "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
-                          ),
+                        Icon(Icons.lightbulb_outline, color: Colors.orange, size: 25),
+                        SizedBox(width: 15),
+                        Expanded(
+                          child: Text("ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।"),
                         ),
                       ],
                     ),
@@ -177,20 +173,15 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-//////////////////////////////////////////////////////////////
-// 🧩 HOVER CARD
-//////////////////////////////////////////////////////////////
+// =======================
+// Stateful HoverCard
+// =======================
 class HoverCard extends StatefulWidget {
   final String title;
   final IconData icon;
   final Color color;
 
-  const HoverCard({
-    super.key,
-    required this.title,
-    required this.icon,
-    required this.color,
-  });
+  const HoverCard({super.key, required this.title, required this.icon, required this.color});
 
   @override
   State<HoverCard> createState() => _HoverCardState();
@@ -243,17 +234,14 @@ class _HoverCardState extends State<HoverCard> {
   }
 }
 
-//////////////////////////////////////////////////////////////
-// 🔘 HOVER NAV ICON
-//////////////////////////////////////////////////////////////
+// =======================
+// Hover Nav Icon
+// =======================
 class _HoverNavIcon extends StatefulWidget {
   final IconData icon;
   final bool isActive;
 
-  const _HoverNavIcon({
-    required this.icon,
-    this.isActive = false,
-  });
+  const _HoverNavIcon({required this.icon, this.isActive = false});
 
   @override
   State<_HoverNavIcon> createState() => _HoverNavIconState();
@@ -273,9 +261,7 @@ class _HoverNavIconState extends State<_HoverNavIcon> {
         child: Icon(
           widget.icon,
           size: 28,
-          color: widget.isActive || isHovered
-              ? Colors.green.shade700
-              : Colors.grey.shade400,
+          color: widget.isActive || isHovered ? Colors.green.shade700 : Colors.grey.shade400,
         ),
       ),
     );
