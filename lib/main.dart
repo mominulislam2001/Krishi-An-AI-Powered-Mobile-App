@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'screens/home_screen.dart'; 
+import 'screens/home_screen.dart';
+import 'screens/advisory_screen.dart';
 
 void main() {
   runApp(const KrishiApp());
@@ -10,9 +11,19 @@ class KrishiApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
+    return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: HomeScreen(),
+      title: 'Krishi Sheba',
+      theme: ThemeData(
+        primarySwatch: Colors.green,
+        useMaterial3: true,
+      ),
+
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const HomeScreen(),
+        '/advisory': (context) => AdvisoryScreen(),
+      },
     );
   }
 }
