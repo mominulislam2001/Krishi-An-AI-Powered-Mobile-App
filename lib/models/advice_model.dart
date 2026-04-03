@@ -10,6 +10,11 @@ class AgriAdvice {
   final String season;
   final String weather;
   final IconData icon;
+  final String audioGuidance;
+  final String? whatToDo;
+  final String? whatToAvoid;
+  final String? nextSteps;
+  final bool hasPesticideWarning;
 
   AgriAdvice({
     required this.title,
@@ -19,5 +24,10 @@ class AgriAdvice {
     required this.season,
     required this.weather,
     required this.icon,
-  });
+    String? audioGuidance,
+    this.whatToDo,
+    this.whatToAvoid,
+    this.nextSteps,
+    this.hasPesticideWarning = false,
+  }) : audioGuidance = audioGuidance ?? description;
 }
