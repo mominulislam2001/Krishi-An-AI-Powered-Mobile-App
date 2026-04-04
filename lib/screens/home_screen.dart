@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'advisory_screen.dart';
+import 'disease_guidance_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
