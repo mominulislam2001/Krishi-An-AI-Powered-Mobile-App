@@ -129,7 +129,15 @@ class HomeScreen extends StatelessWidget {
                         },
                         child: HoverCard(title: "পরামর্শ", icon: Icons.face_retouching_natural, color: Colors.teal),
                       ),
-                      HoverCard(title: "জ্ঞানভান্ডার", icon: Icons.auto_stories_rounded, color: Colors.brown),
+                     GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => DiseaseGuidanceScreen()),
+                          );
+                        },
+                        child:  HoverCard(title: "জ্ঞানভান্ডার", icon: Icons.auto_stories_rounded, color: Colors.brown),
+                      ),
                     ],
                   ),
 
