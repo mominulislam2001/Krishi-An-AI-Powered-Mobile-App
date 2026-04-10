@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
 import 'screens/advisory_screen.dart';
 import 'screens/disease_guidance_screen.dart';
+import 'screens/disease_detection_screen.dart';
 
 void main() {
   runApp(const KrishiApp());
@@ -19,12 +20,12 @@ class KrishiApp extends StatelessWidget {
         primarySwatch: Colors.green,
         useMaterial3: true,
       ),
-
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        '/advisory': (context) => AdvisoryScreen(),
+        '/advisory': (context) => const AdvisoryScreen(),
         '/disease': (context) => const DiseaseGuidanceScreen(),
+        '/detect': (context) => const DiseaseDetectionScreen(),
       },
     );
   }
