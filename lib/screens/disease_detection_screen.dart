@@ -7,6 +7,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
+import 'advisory_screen.dart';
+
 class DiseaseDetectionScreen extends StatefulWidget {
   const DiseaseDetectionScreen({super.key});
 
@@ -427,9 +429,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             Align(
               alignment: Alignment.centerLeft,
               child: Text(
@@ -441,9 +441,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 12),
-
             GridView.builder(
               shrinkWrap: true,
               physics: const NeverScrollableScrollPhysics(),
@@ -458,9 +456,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
                 return _buildCropCard(_cropOptions[index]);
               },
             ),
-
             const SizedBox(height: 20),
-
             if (_isLoading) ...[
               const CircularProgressIndicator(),
               const SizedBox(height: 12),
@@ -470,7 +466,6 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
               ),
               const SizedBox(height: 16),
             ],
-
             if (_errorText != null) ...[
               _buildErrorBox(),
               const SizedBox(height: 16),
@@ -591,13 +586,9 @@ class DiseaseResultScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             _buildImagePreview(),
-
             const SizedBox(height: 20),
-
             Container(
               width: double.infinity,
               padding: const EdgeInsets.all(16),
@@ -628,20 +619,34 @@ class DiseaseResultScreen extends StatelessWidget {
                 ],
               ),
             ),
-
             const SizedBox(height: 20),
-
             SizedBox(
               width: double.infinity,
               child: ElevatedButton.icon(
-                onPressed: () => Navigator.pop(context),
-                icon: const Icon(Icons.arrow_back),
-                label: const Text("ফিরে যান"),
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => const AdvisoryScreen(),
+                    ),
+                  );
+                },
+                icon: const Icon(Icons.medical_information_outlined),
+                label: const Text("পরামর্শ দেখুন"),
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green.shade700,
+                  backgroundColor: Colors.teal.shade700,
                   foregroundColor: Colors.white,
                   padding: const EdgeInsets.symmetric(vertical: 14),
                 ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SizedBox(
+              width: double.infinity,
+              child: OutlinedButton.icon(
+                onPressed: () => Navigator.pop(context),
+                icon: const Icon(Icons.arrow_back),
+                label: const Text("ফিরে যান"),
               ),
             ),
           ],
