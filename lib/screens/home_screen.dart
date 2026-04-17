@@ -13,7 +13,7 @@ class HomeScreen extends StatelessWidget {
 
       bottomNavigationBar: Container(
         margin: const EdgeInsets.all(20),
-        height: 65,
+        height: 55,
         decoration: BoxDecoration(
           color: Colors.white,
           borderRadius: BorderRadius.circular(30),
@@ -48,7 +48,7 @@ class HomeScreen extends StatelessWidget {
       body: Stack(
         children: [
           Container(
-            height: 220,
+            height: 120,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.green.shade800, Colors.green.shade500],
@@ -60,31 +60,51 @@ class HomeScreen extends StatelessWidget {
                 bottomRight: Radius.circular(40),
               ),
             ),
-            child: const Center(
+           child: Align(
+            alignment: Alignment.topLeft, // 👈 move everything top-left
+            child: Padding(
+              padding: const EdgeInsets.all(16), // spacing from edges
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    "কৃষি সহায়তা",
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Row(
+                    children: [
+                      Image.asset(
+                        'assets/images/logo.png',
+                        height: 60,
+                        width: 60,
+                      ),
+
+                      const SizedBox(width: 12),
+
+                      const Text(
+                        "কৃষি",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 36,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 6),
-                  Text(
+
+                  const SizedBox(height: 6),
+
+                  const Text(
                     "আপনার ফসলের জন্য সেরা পরামর্শ",
                     style: TextStyle(color: Colors.white70),
                   ),
                 ],
               ),
+
+                  
+            ),
             ),
           ),
 
           Padding(
-            padding: const EdgeInsets.only(top: 180, left: 20, right: 20),
-            child: SingleChildScrollView(
+            padding: const EdgeInsets.only(top: 150, left: 20, right: 20),
+            
               child: Column(
                 children: [
                   Container(
@@ -130,60 +150,45 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(height: 30),
 
                   // Full-width Disease Detection card
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.pushNamed(context, '/detect');
-                    },
-                    child: const WideHoverCard(
+            Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pushNamed(context, '/detect');
+                  },
+                  child: const SizedBox(
+                    width: double.infinity,
+                    child: HoverCard(
                       title: "রোগ শনাক্তকরণ",
-                      icon: Icons.camera_alt_rounded,
+                      icon: Icons.camera_rounded,
                       color: Colors.orange,
                     ),
                   ),
+                ),
 
-                  const SizedBox(height: 18),
+                const SizedBox(height: 13),
 
-                  // 2-column row below
-                  Row(
-                    children: [
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) => const AdvisoryScreen(),
-                              ),
-                            );
-                          },
-                          child: const HoverCard(
-                            title: "পরামর্শ",
-                            icon: Icons.face_retouching_natural,
-                            color: Colors.teal,
-                          ),
-                        ),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            const DiseaseGuidanceScreen(),
                       ),
-                      const SizedBox(width: 18),
-                      Expanded(
-                        child: GestureDetector(
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    const DiseaseGuidanceScreen(),
-                              ),
-                            );
-                          },
-                          child: const HoverCard(
-                            title: "জ্ঞানভান্ডার",
-                            icon: Icons.auto_stories_rounded,
-                            color: Colors.brown,
-                          ),
-                        ),
-                      ),
-                    ],
+                    );
+                  },
+                  child: const SizedBox(
+                    width: double.infinity,
+                    child: HoverCard(
+                      title: "জ্ঞানভান্ডার",
+                      icon: Icons.menu_book_rounded,
+                      color: Colors.brown,
+                    ),
                   ),
+                ),
+              ],
+            ),
 
                   const SizedBox(height: 30),
 
@@ -227,7 +232,7 @@ class HomeScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
+          
         ],
       ),
     );
@@ -351,7 +356,7 @@ class _HoverCardState extends State<HoverCard> {
               scale: isHovered ? 1.15 : 1.0,
               duration: const Duration(milliseconds: 250),
               child: CircleAvatar(
-                radius: 26,
+                radius: 18,
                 backgroundColor: widget.color.withOpacity(0.15),
                 child: Icon(widget.icon, color: widget.color, size: 28),
               ),
