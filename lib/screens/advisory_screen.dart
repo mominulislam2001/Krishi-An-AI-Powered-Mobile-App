@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
 import '../models/advice_model.dart';
 
 // ---------------------------------------------------------------------------
@@ -14,27 +15,42 @@ class _AudioPlayer extends StatefulWidget {
 
 class _AudioPlayerState extends State<_AudioPlayer> {
   bool _playing = false;
+  final FlutterTts _tts = FlutterTts();
 
-  
-  // ────────────────────────────────────────────────────────────────────────
+  @override
+  void initState() {
+    super.initState();
+    _tts.setLanguage("bn-BD");
+    _tts.setSpeechRate(0.45);
+    _tts.setPitch(1.0);
+    _tts.setCompletionHandler(() {
+      if (mounted) setState(() => _playing = false);
+    });
+    _tts.setCancelHandler(() {
+      if (mounted) setState(() => _playing = false);
+    });
+  }
 
-  void _togglePlay() {
-    setState(() => _playing = !_playing);
-    // TODO: call _speak() or _stop() once flutter_tts is integrated
+  @override
+  void dispose() {
+    _tts.stop();
+    super.dispose();
+  }
+
+  Future<void> _togglePlay() async {
     if (_playing) {
-      // Simulate audio ending after a few seconds (remove when real TTS used)
-      Future.delayed(const Duration(seconds: 3), () {
-        if (mounted) setState(() => _playing = false);
-      });
+      await _tts.stop();
+      setState(() => _playing = false);
+    } else {
+      setState(() => _playing = true);
+      await _tts.speak(widget.text);
     }
   }
 
-  void _replay() {
+  Future<void> _replay() async {
+    await _tts.stop();
     setState(() => _playing = true);
-    // TODO: call _stop() then _speak()
-    Future.delayed(const Duration(seconds: 3), () {
-      if (mounted) setState(() => _playing = false);
-    });
+    await _tts.speak(widget.text);
   }
 
   @override
@@ -102,7 +118,7 @@ class _AdvisoryScreenState extends State<AdvisoryScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 2, vsync: this);
+    _tabController = TabController(length: 1, vsync: this);
   }
 
   // ── FR-22: Rich dataset covering crop × season × weather combinations ──
@@ -319,9 +335,7 @@ class _AdvisoryScreenState extends State<AdvisoryScreen>
           labelColor: Colors.white,
           unselectedLabelColor: Colors.white70,
           tabs: const [
-            // FR-26: Icon + label tabs
-            Tab(icon: Icon(Icons.shield_outlined), text: "প্রতিরোধমূলক"),
-            Tab(icon: Icon(Icons.healing_outlined), text: "কার্যকরী"),
+            Tab(icon: Icon(Icons.healing_outlined), text: "কার্যকরী পরামর্শ"),
           ],
         ),
       ),
@@ -333,9 +347,7 @@ class _AdvisoryScreenState extends State<AdvisoryScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                // FR-20: Preventive tab
-                _buildList(filteredPreventive, isPreventive: true),
-                // FR-21: Corrective tab
+                // FR-21: Corrective tab only
                 _buildList(filteredCorrective, isPreventive: false),
               ],
             ),
