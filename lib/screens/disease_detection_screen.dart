@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-import 'advisory_screen.dart';
+import 'preventive_screen.dart';
 
 class DiseaseDetectionScreen extends StatefulWidget {
   const DiseaseDetectionScreen({super.key});
@@ -18,15 +18,6 @@ class DiseaseDetectionScreen extends StatefulWidget {
 }
 
 class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
-  final ImagePicker _picker = ImagePicker();
-
-  String? _selectedCrop;
-  XFile? _pickedImage;
-  Uint8List? _webImageBytes;
-
-  bool _isLoading = false;
-  String? _errorText;
-
   final List<String> _cropOptions = [
     "আলু",
     "টমেটো",
@@ -35,6 +26,170 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
     "পাট",
     "ভুট্টা",
   ];
+
+  Widget _buildCropCard(String crop) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(20),
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => CaptureGuideScreen(cropName: crop),
+          ),
+        );
+      },
+      child: Ink(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: Colors.green.shade100),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.green.withOpacity(0.08),
+              blurRadius: 12,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 12),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircleAvatar(
+                radius: 26,
+                backgroundColor: Colors.green.shade50,
+                child: Icon(
+                  Icons.eco_rounded,
+                  color: Colors.green.shade700,
+                  size: 28,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Text(
+                crop,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade900,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                "ছবি দিন",
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFF6F2F8),
+      appBar: AppBar(
+        title: const Text(
+          "রোগ শনাক্তকরণ",
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.green.shade700,
+        iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.green.shade50,
+                borderRadius: BorderRadius.circular(18),
+                border: Border.all(color: Colors.green.shade200),
+              ),
+              child: Column(
+                children: [
+                  Icon(
+                    Icons.camera_alt_rounded,
+                    size: 48,
+                    color: Colors.green.shade700,
+                  ),
+                  const SizedBox(height: 12),
+                  Text(
+                    "ফসল নির্বাচন করে ছবি দিন",
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade900,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(height: 20),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                "ফসল নির্বাচন করুন",
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green.shade900,
+                ),
+              ),
+            ),
+            const SizedBox(height: 12),
+            GridView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              itemCount: _cropOptions.length,
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                crossAxisSpacing: 14,
+                mainAxisSpacing: 14,
+                childAspectRatio: 1.05,
+              ),
+              itemBuilder: (context, index) {
+                return _buildCropCard(_cropOptions[index]);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class CaptureGuideScreen extends StatefulWidget {
+  final String cropName;
+
+  const CaptureGuideScreen({
+    super.key,
+    required this.cropName,
+  });
+
+  @override
+  State<CaptureGuideScreen> createState() => _CaptureGuideScreenState();
+}
+
+class _CaptureGuideScreenState extends State<CaptureGuideScreen> {
+  final ImagePicker _picker = ImagePicker();
+
+  XFile? _pickedImage;
+  Uint8List? _webImageBytes;
+  bool _isLoading = false;
+  String? _errorText;
 
   final Map<String, Map<String, dynamic>> _demoResults = {
     "টমেটো": {
@@ -59,56 +214,6 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
     },
   };
 
-  Future<void> _chooseImageSourceForCrop(String crop) async {
-    final source = await showModalBottomSheet<ImageSource>(
-      context: context,
-      backgroundColor: Colors.white,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
-      builder: (context) {
-        return SafeArea(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Wrap(
-              children: [
-                Text(
-                  "$crop এর ছবি নির্বাচন করুন",
-                  style: const TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                ListTile(
-                  leading: const Icon(Icons.camera_alt, color: Colors.green),
-                  title: const Text("ছবি তুলুন"),
-                  onTap: () => Navigator.pop(context, ImageSource.camera),
-                ),
-                ListTile(
-                  leading: const Icon(Icons.upload_file, color: Colors.blue),
-                  title: const Text("ছবি আপলোড করুন"),
-                  onTap: () => Navigator.pop(context, ImageSource.gallery),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-
-    if (source != null) {
-      setState(() {
-        _selectedCrop = crop;
-        _pickedImage = null;
-        _webImageBytes = null;
-        _errorText = null;
-      });
-
-      await _pickImage(source);
-    }
-  }
-
   Future<void> _pickImage(ImageSource source) async {
     try {
       final XFile? image = await _picker.pickImage(
@@ -129,7 +234,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
         _errorText = null;
       });
 
-      if (_selectedCrop == "আলু") {
+      if (widget.cropName == "আলু") {
         await _uploadPotatoToApi();
       } else {
         await _showDemoResult();
@@ -214,7 +319,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
   }
 
   Future<void> _showDemoResult() async {
-    if (_selectedCrop == null || _pickedImage == null) return;
+    if (_pickedImage == null) return;
 
     setState(() {
       _isLoading = true;
@@ -224,7 +329,7 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
     await Future.delayed(const Duration(seconds: 2));
 
     try {
-      final result = _demoResults[_selectedCrop!];
+      final result = _demoResults[widget.cropName];
 
       if (result == null) {
         setState(() {
@@ -246,10 +351,10 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
       if (!mounted) return;
 
       final resultText =
-          "শনাক্ত ফসল: $_selectedCrop\nশনাক্ত রোগ: $diseaseClass\nনির্ভুলতার হার: ${(confidence * 100).toStringAsFixed(2)}%";
+          "শনাক্ত ফসল: ${widget.cropName}\nশনাক্ত রোগ: $diseaseClass\nনির্ভুলতার হার: ${(confidence * 100).toStringAsFixed(2)}%";
 
       _openResultScreen(
-        cropName: _selectedCrop!,
+        cropName: widget.cropName,
         resultText: resultText,
         isDemo: true,
       );
@@ -303,59 +408,40 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
     );
   }
 
-  Widget _buildCropCard(String crop) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(20),
-      onTap: () => _chooseImageSourceForCrop(crop),
-      child: Ink(
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: Colors.green.shade100),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.green.withOpacity(0.08),
-              blurRadius: 12,
-              offset: const Offset(0, 6),
-            ),
-          ],
+  Widget _buildInfoPoint(String title, String description) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Icon(
+          Icons.radio_button_checked,
+          size: 18,
+          color: Colors.green.shade500,
         ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 12),
+        const SizedBox(width: 10),
+        Expanded(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              CircleAvatar(
-                radius: 26,
-                backgroundColor: Colors.green.shade50,
-                child: Icon(
-                  Icons.eco_rounded,
-                  color: Colors.green.shade700,
-                  size: 28,
-                ),
-              ),
-              const SizedBox(height: 12),
               Text(
-                crop,
-                textAlign: TextAlign.center,
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 15,
                   fontWeight: FontWeight.bold,
-                  color: Colors.green.shade900,
                 ),
               ),
-              const SizedBox(height: 6),
+              const SizedBox(height: 4),
               Text(
-                "ছবি দিন",
+                description,
                 style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey.shade600,
+                  fontSize: 14,
+                  color: Colors.grey.shade700,
+                  height: 1.5,
                 ),
               ),
             ],
           ),
         ),
-      ),
+      ],
     );
   }
 
@@ -380,13 +466,76 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
     );
   }
 
+  Widget _buildExampleCard({
+  required String title,
+  required bool isCorrect,
+  required String imagePath,
+}) {
+  final Color accent = isCorrect ? Colors.green : Colors.red;
+
+  return Expanded(
+    child: Column(
+      children: [
+        Text(
+          title,
+          style: const TextStyle(
+            fontSize: 15,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        const SizedBox(height: 10),
+        Container(
+          height: 180,
+          decoration: BoxDecoration(
+            color: isCorrect ? Colors.green.shade50 : Colors.orange.shade50,
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(
+              color: isCorrect
+                  ? Colors.green.shade200
+                  : Colors.orange.shade200,
+            ),
+          ),
+          clipBehavior: Clip.antiAlias,
+          child: Image.asset(
+            imagePath,
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Center(
+                child: Icon(
+                  isCorrect
+                      ? Icons.center_focus_strong
+                      : Icons.image_not_supported_outlined,
+                  size: 72,
+                  color: accent,
+                ),
+              );
+            },
+          ),
+        ),
+        const SizedBox(height: 10),
+        CircleAvatar(
+          radius: 22,
+          backgroundColor: accent.withOpacity(0.12),
+          child: Icon(
+            isCorrect ? Icons.check : Icons.close,
+            color: accent,
+            size: 30,
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF6F2F8),
+      backgroundColor: const Color(0xFFF4F8F5),
       appBar: AppBar(
         title: const Text(
-          "রোগ শনাক্তকরণ",
+          "ছবি তুলুন",
           style: TextStyle(
             fontWeight: FontWeight.bold,
             color: Colors.white,
@@ -395,83 +544,131 @@ class _DiseaseDetectionScreenState extends State<DiseaseDetectionScreen> {
         backgroundColor: Colors.green.shade700,
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          children: [
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(18),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                borderRadius: BorderRadius.circular(18),
-                border: Border.all(color: Colors.green.shade200),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.camera_alt_rounded,
-                    size: 48,
-                    color: Colors.green.shade700,
-                  ),
-                  const SizedBox(height: 12),
-                  Text(
-                    _selectedCrop == null
-                        ? "ফসল নির্বাচন করে ছবি দিন"
-                        : "নির্বাচিত ফসল: $_selectedCrop",
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green.shade900,
-                    ),
-                    textAlign: TextAlign.center,
-                  ),
+      body: Stack(
+        children: [
+          Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xFFF8FBF9),
+                  Color(0xFFEAF7EF),
                 ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
               ),
             ),
-            const SizedBox(height: 20),
-            Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "ফসল নির্বাচন করুন",
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green.shade900,
+          ),
+          SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                Row(
+                  children: [
+                    _buildExampleCard(
+                      title: "ভুল পদ্ধতি",
+                      isCorrect: false,
+                      imagePath: "images/wrong_capture_placeholder.jpg",
+                    ),
+                    const SizedBox(width: 14),
+                    _buildExampleCard(
+                      title: "সঠিক পদ্ধতি",
+                      isCorrect: true,
+                      imagePath: "images/correct_capture_placeholder.jpeg",
+                    ),
+                  ],
                 ),
-              ),
+                const SizedBox(height: 24),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(18),
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.85),
+                    borderRadius: BorderRadius.circular(22),
+                    border: Border.all(color: Colors.green.shade100),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildInfoPoint(
+                        "ফসল কেন্দ্রিক ছবি তুলুন",
+                        "নির্দিষ্ট ফসলের নির্দিষ্ট রোগ বা আক্রান্ত অংশের ছবি তুলুন। পুরো গাছের বদলে রোগ দেখা যাচ্ছে এমন অংশ স্পষ্টভাবে দেখান।",
+                      ),
+                      const SizedBox(height: 18),
+                      _buildInfoPoint(
+                        "সঠিকভাবে ছবি তুলুন",
+                        "ছবি যেন ঝাপসা না হয়। ভালো আলোতে, ফোকাস ঠিক রেখে, কাছ থেকে এবং স্থির হাতে ছবি তুলুন।",
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+                if (_isLoading) ...[
+                  const CircularProgressIndicator(),
+                  const SizedBox(height: 12),
+                  const Text(
+                    "ছবি বিশ্লেষণ করা হচ্ছে...",
+                    style: TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                  const SizedBox(height: 16),
+                ],
+                if (_errorText != null) ...[
+                  _buildErrorBox(),
+                  const SizedBox(height: 16),
+                ],
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading
+                        ? null
+                        : () => _pickImage(ImageSource.camera),
+                    icon: const Icon(Icons.camera_alt_outlined, size: 26),
+                    label: const Text(
+                      "ক্যামেরা দিয়ে ছবি তুলুন",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 14),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    onPressed: _isLoading
+                        ? null
+                        : () => _pickImage(ImageSource.gallery),
+                    icon: const Icon(Icons.photo_library_outlined, size: 26),
+                    label: const Text(
+                      "ডিভাইসের ছবি আপলোড করুন",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 18),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 24),
+              ],
             ),
-            const SizedBox(height: 12),
-            GridView.builder(
-              shrinkWrap: true,
-              physics: const NeverScrollableScrollPhysics(),
-              itemCount: _cropOptions.length,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                crossAxisSpacing: 14,
-                mainAxisSpacing: 14,
-                childAspectRatio: 1.05,
-              ),
-              itemBuilder: (context, index) {
-                return _buildCropCard(_cropOptions[index]);
-              },
-            ),
-            const SizedBox(height: 20),
-            if (_isLoading) ...[
-              const CircularProgressIndicator(),
-              const SizedBox(height: 12),
-              const Text(
-                "ছবি বিশ্লেষণ করা হচ্ছে...",
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              const SizedBox(height: 16),
-            ],
-            if (_errorText != null) ...[
-              _buildErrorBox(),
-              const SizedBox(height: 16),
-            ],
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
@@ -528,10 +725,6 @@ class DiseaseResultScreen extends StatelessWidget {
         ),
         backgroundColor: Colors.green.shade700,
         iconTheme: const IconThemeData(color: Colors.white),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
