@@ -2,43 +2,44 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../models/auth_store.dart';
 
-// FR-02: Authenticate users before granting access to the dashboard
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+// FR-01: Register using a valid mobile number
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
-  final _formKey    = GlobalKey<FormState>();
-  final _mobileCtrl = TextEditingController();
-  final _passCtrl   = TextEditingController();
-  bool _obscure     = true;
+class _RegisterScreenState extends State<RegisterScreen> {
+  final _formKey      = GlobalKey<FormState>();
+  final _mobileCtrl   = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _confirmCtrl  = TextEditingController();
+  bool _obscurePass    = true;
+  bool _obscureConfirm = true;
   String? _error;
 
-  void _login() {
+  void _register() {
     if (!_formKey.currentState!.validate()) return;
-    final ok = AuthStore.login(_mobileCtrl.text.trim(), _passCtrl.text);
-    if (!ok) {
-      setState(() => _error = "মোবাইল নম্বর বা পাসওয়ার্ড ভুল");
+    if (_passwordCtrl.text != _confirmCtrl.text) {
+      setState(() => _error = "পাসওয়ার্ড মিলছে না");
       return;
     }
-    // FR-02: Only on success, navigate to dashboard
-    Navigator.pushReplacementNamed(context, '/');
-  }
-
-  // Demo login — registers + logs in a test account instantly
-  void _demoLogin() {
-    AuthStore.register('01712345678', 'demo123');
-    AuthStore.updateProfile(
-      name: 'আবদুল করিম',
-      district: 'ঢাকা',
-      upazila: 'সাভার',
-      crops: ['Rice', 'Potato'],
+    final success = AuthStore.register(
+      _mobileCtrl.text.trim(),
+      _passwordCtrl.text,
     );
-    AuthStore.login('01712345678', 'demo123');
-    Navigator.pushReplacementNamed(context, '/');
+    if (!success) {
+      setState(() => _error = "এই মোবাইল নম্বর আগেই নিবন্ধিত");
+      return;
+    }
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.green.shade700,
+        content: const Text("নিবন্ধন সফল! এখন লগইন করুন।"),
+      ),
+    );
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   InputDecoration _inputDecoration({
@@ -68,7 +69,7 @@ class _LoginScreenState extends State<LoginScreen> {
         children: [
           // Green header
           Container(
-            height: 220,
+            height: 200,
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [Colors.green.shade800, Colors.green.shade500],
@@ -84,19 +85,18 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.agriculture, color: Colors.white, size: 50),
+                  Icon(Icons.agriculture, color: Colors.white, size: 44),
                   SizedBox(height: 8),
                   Text(
                     "কৃষি সহায়তা",
                     style: TextStyle(
                         color: Colors.white,
-                        fontSize: 26,
+                        fontSize: 24,
                         fontWeight: FontWeight.bold),
                   ),
-                  SizedBox(height: 4),
                   Text(
-                    "আপনার ফসলের জন্য সেরা পরামর্শ",
-                    style: TextStyle(color: Colors.white70),
+                    "নতুন অ্যাকাউন্ট তৈরি করুন",
+                    style: TextStyle(color: Colors.white70, fontSize: 13),
                   ),
                 ],
               ),
@@ -105,7 +105,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
           // Form card
           Padding(
-            padding: const EdgeInsets.only(top: 175),
+            padding: const EdgeInsets.only(top: 155),
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: Card(
@@ -120,7 +120,7 @@ class _LoginScreenState extends State<LoginScreen> {
                       children: [
                         const SizedBox(height: 8),
                         Text(
-                          "লগইন",
+                          "নিবন্ধন",
                           style: TextStyle(
                               fontSize: 20,
                               fontWeight: FontWeight.bold,
@@ -128,6 +128,7 @@ class _LoginScreenState extends State<LoginScreen> {
                         ),
                         const SizedBox(height: 20),
 
+                        // FR-01: Mobile number
                         TextFormField(
                           controller: _mobileCtrl,
                           keyboardType: TextInputType.phone,
@@ -140,30 +141,57 @@ class _LoginScreenState extends State<LoginScreen> {
                             hint: "01XXXXXXXXX",
                             icon: Icons.phone_android_rounded,
                           ),
-                          validator: (v) => (v == null || v.isEmpty)
-                              ? "মোবাইল নম্বর দিন"
-                              : null,
+                          validator: (v) {
+                            if (v == null || v.isEmpty) return "মোবাইল নম্বর দিন";
+                            if (!RegExp(r'^01[3-9]\d{8}$').hasMatch(v))
+                              return "সঠিক বাংলাদেশি নম্বর দিন (01XXXXXXXXX)";
+                            return null;
+                          },
                         ),
                         const SizedBox(height: 14),
 
                         TextFormField(
-                          controller: _passCtrl,
-                          obscureText: _obscure,
+                          controller: _passwordCtrl,
+                          obscureText: _obscurePass,
                           decoration: _inputDecoration(
                             label: "পাসওয়ার্ড",
-                            hint: "••••••••",
+                            hint: "কমপক্ষে ৬ অক্ষর",
                             icon: Icons.lock_outline_rounded,
                           ).copyWith(
                             suffixIcon: IconButton(
-                              icon: Icon(_obscure
+                              icon: Icon(_obscurePass
                                   ? Icons.visibility_off
                                   : Icons.visibility),
                               onPressed: () =>
-                                  setState(() => _obscure = !_obscure),
+                                  setState(() => _obscurePass = !_obscurePass),
+                            ),
+                          ),
+                          validator: (v) {
+                            if (v == null || v.length < 6)
+                              return "কমপক্ষে ৬ অক্ষরের পাসওয়ার্ড দিন";
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 14),
+
+                        TextFormField(
+                          controller: _confirmCtrl,
+                          obscureText: _obscureConfirm,
+                          decoration: _inputDecoration(
+                            label: "পাসওয়ার্ড নিশ্চিত করুন",
+                            hint: "পুনরায় পাসওয়ার্ড দিন",
+                            icon: Icons.lock_reset_rounded,
+                          ).copyWith(
+                            suffixIcon: IconButton(
+                              icon: Icon(_obscureConfirm
+                                  ? Icons.visibility_off
+                                  : Icons.visibility),
+                              onPressed: () => setState(
+                                  () => _obscureConfirm = !_obscureConfirm),
                             ),
                           ),
                           validator: (v) => (v == null || v.isEmpty)
-                              ? "পাসওয়ার্ড দিন"
+                              ? "পাসওয়ার্ড নিশ্চিত করুন"
                               : null,
                         ),
 
@@ -180,38 +208,17 @@ class _LoginScreenState extends State<LoginScreen> {
                           width: double.infinity,
                           height: 50,
                           child: ElevatedButton(
-                            onPressed: _login,
+                            onPressed: _register,
                             style: ElevatedButton.styleFrom(
                               backgroundColor: Colors.green.shade700,
                               foregroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(14)),
                             ),
-                            child: const Text("লগইন করুন",
+                            child: const Text("নিবন্ধন করুন",
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold)),
-                          ),
-                        ),
-                        const SizedBox(height: 10),
-
-                        // Quick demo login
-                        SizedBox(
-                          width: double.infinity,
-                          height: 46,
-                          child: OutlinedButton.icon(
-                            onPressed: _demoLogin,
-                            icon: Icon(Icons.flash_on,
-                                color: Colors.green.shade700),
-                            label: Text("ডেমো লগইন",
-                                style:
-                                    TextStyle(color: Colors.green.shade700)),
-                            style: OutlinedButton.styleFrom(
-                              side:
-                                  BorderSide(color: Colors.green.shade400),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(14)),
-                            ),
                           ),
                         ),
 
@@ -219,11 +226,11 @@ class _LoginScreenState extends State<LoginScreen> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            const Text("অ্যাকাউন্ট নেই? "),
+                            const Text("আগেই অ্যাকাউন্ট আছে? "),
                             GestureDetector(
                               onTap: () => Navigator.pushReplacementNamed(
-                                  context, '/register'),
-                              child: Text("নিবন্ধন করুন",
+                                  context, '/login'),
+                              child: Text("লগইন করুন",
                                   style: TextStyle(
                                       color: Colors.green.shade700,
                                       fontWeight: FontWeight.bold)),
@@ -246,7 +253,8 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   void dispose() {
     _mobileCtrl.dispose();
-    _passCtrl.dispose();
+    _passwordCtrl.dispose();
+    _confirmCtrl.dispose();
     super.dispose();
   }
 }
