@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'advisory_screen.dart';
 import 'disease_guidance_screen.dart';
+import 'preventive_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -26,10 +27,20 @@ class HomeScreen extends StatelessWidget {
         ),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: const [
-            _HoverNavIcon(icon: Icons.home_rounded, isActive: true),
-            _HoverNavIcon(icon: Icons.info_outline_rounded),
-            _HoverNavIcon(icon: Icons.person_outline_rounded),
+          children: [
+            const _HoverNavIcon(icon: Icons.home_rounded, isActive: true),
+            GestureDetector(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PreventiveScreen(),
+                  ),
+                );
+              },
+              child: const _HoverNavIcon(icon: Icons.info_outline_rounded),
+            ),
+            const _HoverNavIcon(icon: Icons.person_outline_rounded),
           ],
         ),
       ),
@@ -118,58 +129,57 @@ class HomeScreen extends StatelessWidget {
 
                   const SizedBox(height: 30),
 
-                  GridView.count(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisCount: 2,
-                    crossAxisSpacing: 18,
-                    mainAxisSpacing: 18,
-                    childAspectRatio: 1.1,
+                  // Full-width Disease Detection card
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.pushNamed(context, '/detect');
+                    },
+                    child: const WideHoverCard(
+                      title: "রোগ শনাক্তকরণ",
+                      icon: Icons.camera_alt_rounded,
+                      color: Colors.orange,
+                    ),
+                  ),
+
+                  const SizedBox(height: 18),
+
+                  // 2-column row below
+                  Row(
                     children: [
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.pushNamed(context, '/detect');
-                        },
-                        child: const HoverCard(
-                          title: "রোগ শনাক্তকরণ",
-                          icon: Icons.camera_rounded,
-                          color: Colors.orange,
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const AdvisoryScreen(),
+                              ),
+                            );
+                          },
+                          child: const HoverCard(
+                            title: "পরামর্শ",
+                            icon: Icons.face_retouching_natural,
+                            color: Colors.teal,
+                          ),
                         ),
                       ),
-                      const HoverCard(
-                        title: "আবহাওয়া",
-                        icon: Icons.wb_cloudy_rounded,
-                        color: Colors.blue,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => const AdvisoryScreen(),
-                            ),
-                          );
-                        },
-                        child: const HoverCard(
-                          title: "পরামর্শ",
-                          icon: Icons.face_retouching_natural,
-                          color: Colors.teal,
-                        ),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  const DiseaseGuidanceScreen(),
-                            ),
-                          );
-                        },
-                        child: const HoverCard(
-                          title: "জ্ঞানভান্ডার",
-                          icon: Icons.auto_stories_rounded,
-                          color: Colors.brown,
+                      const SizedBox(width: 18),
+                      Expanded(
+                        child: GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    const DiseaseGuidanceScreen(),
+                              ),
+                            );
+                          },
+                          child: const HoverCard(
+                            title: "জ্ঞানভান্ডার",
+                            icon: Icons.auto_stories_rounded,
+                            color: Colors.brown,
+                          ),
                         ),
                       ),
                     ],
@@ -219,6 +229,76 @@ class HomeScreen extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class WideHoverCard extends StatefulWidget {
+  final String title;
+  final IconData icon;
+  final Color color;
+
+  const WideHoverCard({
+    super.key,
+    required this.title,
+    required this.icon,
+    required this.color,
+  });
+
+  @override
+  State<WideHoverCard> createState() => _WideHoverCardState();
+}
+
+class _WideHoverCardState extends State<WideHoverCard> {
+  bool isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => isHovered = true),
+      onExit: (_) => setState(() => isHovered = false),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 250),
+        width: double.infinity,
+        height: 90,
+        transform: isHovered
+            ? Matrix4.translationValues(0, -6, 0)
+            : Matrix4.identity(),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(25),
+          boxShadow: [
+            BoxShadow(
+              color: widget.color.withOpacity(isHovered ? 0.25 : 0.08),
+              blurRadius: isHovered ? 25 : 15,
+              offset: const Offset(0, 10),
+            ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            AnimatedScale(
+              scale: isHovered ? 1.15 : 1.0,
+              duration: const Duration(milliseconds: 250),
+              child: CircleAvatar(
+                radius: 28,
+                backgroundColor: widget.color.withOpacity(0.15),
+                child: Icon(widget.icon, color: widget.color, size: 30),
+              ),
+            ),
+            const SizedBox(width: 16),
+            Text(
+              widget.title,
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 16,
+                color: widget.color,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
