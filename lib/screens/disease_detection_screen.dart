@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 
-import 'preventive_screen.dart';
+import 'disease_guidance_screen.dart';
 
 class DiseaseDetectionScreen extends StatefulWidget {
   const DiseaseDetectionScreen({super.key});
@@ -467,67 +467,67 @@ class _CaptureGuideScreenState extends State<CaptureGuideScreen> {
   }
 
   Widget _buildExampleCard({
-  required String title,
-  required bool isCorrect,
-  required String imagePath,
-}) {
-  final Color accent = isCorrect ? Colors.green : Colors.red;
+    required String title,
+    required bool isCorrect,
+    required String imagePath,
+  }) {
+    final Color accent = isCorrect ? Colors.green : Colors.red;
 
-  return Expanded(
-    child: Column(
-      children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 15,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(height: 10),
-        Container(
-          height: 180,
-          decoration: BoxDecoration(
-            color: isCorrect ? Colors.green.shade50 : Colors.orange.shade50,
-            borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: isCorrect
-                  ? Colors.green.shade200
-                  : Colors.orange.shade200,
+    return Expanded(
+      child: Column(
+        children: [
+          Text(
+            title,
+            style: const TextStyle(
+              fontSize: 15,
+              fontWeight: FontWeight.bold,
             ),
           ),
-          clipBehavior: Clip.antiAlias,
-          child: Image.asset(
-            imagePath,
-            width: double.infinity,
-            height: double.infinity,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Center(
-                child: Icon(
-                  isCorrect
-                      ? Icons.center_focus_strong
-                      : Icons.image_not_supported_outlined,
-                  size: 72,
-                  color: accent,
-                ),
-              );
-            },
+          const SizedBox(height: 10),
+          Container(
+            height: 180,
+            decoration: BoxDecoration(
+              color: isCorrect ? Colors.green.shade50 : Colors.orange.shade50,
+              borderRadius: BorderRadius.circular(18),
+              border: Border.all(
+                color: isCorrect
+                    ? Colors.green.shade200
+                    : Colors.orange.shade200,
+              ),
+            ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset(
+              imagePath,
+              width: double.infinity,
+              height: double.infinity,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Center(
+                  child: Icon(
+                    isCorrect
+                        ? Icons.center_focus_strong
+                        : Icons.image_not_supported_outlined,
+                    size: 72,
+                    color: accent,
+                  ),
+                );
+              },
+            ),
           ),
-        ),
-        const SizedBox(height: 10),
-        CircleAvatar(
-          radius: 22,
-          backgroundColor: accent.withOpacity(0.12),
-          child: Icon(
-            isCorrect ? Icons.check : Icons.close,
-            color: accent,
-            size: 30,
+          const SizedBox(height: 10),
+          CircleAvatar(
+            radius: 22,
+            backgroundColor: accent.withOpacity(0.12),
+            child: Icon(
+              isCorrect ? Icons.check : Icons.close,
+              color: accent,
+              size: 30,
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -573,7 +573,8 @@ class _CaptureGuideScreenState extends State<CaptureGuideScreen> {
                     _buildExampleCard(
                       title: "সঠিক পদ্ধতি",
                       isCorrect: true,
-                      imagePath: "images/correct_capture_placeholder.jpeg",
+                      imagePath:
+                          "images/correct_capture_placeholder.jpeg",
                     ),
                   ],
                 ),
@@ -820,11 +821,11 @@ class DiseaseResultScreen extends StatelessWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => const AdvisoryScreen(),
+                      builder: (context) => const DiseaseGuidanceScreen(),
                     ),
                   );
                 },
-                icon: const Icon(Icons.medical_information_outlined),
+                icon: const Icon(Icons.menu_book_outlined),
                 label: const Text("পরামর্শ দেখুন"),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.teal.shade700,

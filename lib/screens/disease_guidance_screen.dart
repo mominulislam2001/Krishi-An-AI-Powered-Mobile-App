@@ -80,7 +80,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'আলু',
       'icon': '🥔',
       'color': const Color(0xFF6D4C41),
-      'imageUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/Phytophthora_infestans_on_potato_leaf.jpg/640px-Phytophthora_infestans_on_potato_leaf.jpg',
+      'imageUrl': 'assets/images/potato_blight.jpeg',
       'cause': 'Phytophthora infestans নামক ছত্রাক জাতীয় জীবাণু দ্বারা এ রোগ হয়।',
       'symptoms': 'পাতায় পানি ভেজা বাদামি দাগ পড়ে, যা দ্রুত বড় হয়। পাতার নিচে সাদা ছত্রাকের আবরণ দেখা যায়। ঠান্ডা ও ভেজা আবহাওয়ায় রোগ দ্রুত ছড়ায়।',
       'management': [
