@@ -14,7 +14,7 @@ class KrishiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Krishi Sheba',
+      title: 'Krishi',
       theme: ThemeData(
         primarySwatch: Colors.green,
         useMaterial3: true,
