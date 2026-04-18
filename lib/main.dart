@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/advisory_screen.dart';
 import 'screens/disease_guidance_screen.dart';
 import 'screens/disease_detection_screen.dart';
 
@@ -15,7 +14,7 @@ class KrishiApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Krishi Sheba',
+      title: 'Krishi',
       theme: ThemeData(
         primarySwatch: Colors.green,
         useMaterial3: true,
@@ -23,7 +22,6 @@ class KrishiApp extends StatelessWidget {
       initialRoute: '/',
       routes: {
         '/': (context) => const HomeScreen(),
-        '/advisory': (context) => const AdvisoryScreen(),
         '/disease': (context) => const DiseaseGuidanceScreen(),
         '/detect': (context) => const DiseaseDetectionScreen(),
       },
