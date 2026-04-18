@@ -5,8 +5,7 @@ import 'advisory_screen.dart';
 import 'disease_guidance_screen.dart';
 import 'preventive_screen.dart';
 
-class HomeScreen extends StatelessWidget {
-  const HomeScreen({super.key});
+
 class WeatherData {
   final double tempC;
   final double humidity;
@@ -418,61 +417,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     style: TextStyle(color: Colors.white70),
                   ),
                 ],
-              ),
-
-                  
-            ),
+              ),     
             ),
           ),
+         ),
 
-          Padding(
-            padding: const EdgeInsets.only(top: 150, left: 20, right: 20),
-            
-              child: Column(
-                children: [
-                  Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 15,
-                      vertical: 12,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.red.withOpacity(0.1),
-                          blurRadius: 20,
-                        ),
-                      ],
-                      border: Border.all(color: Colors.red.shade100),
-                    ),
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const CircleAvatar(
-                          radius: 14,
-                          backgroundColor: Colors.red,
-                          child: Icon(
-                            Icons.notifications_active,
-                            color: Colors.white,
-                            size: 16,
-                          ),
-                        ),
-                        const SizedBox(width: 12),
-                        Text(
-                          "জরুরি সতর্কতা: আজ স্প্রে করবেন না",
-                          style: TextStyle(
-                            color: Colors.red.shade700,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
+        
 
-                  const SizedBox(height: 30),
+                  
 
-                  // Full-width Disease Detection card
+              // Full-width Disease Detection card
             SingleChildScrollView(
             padding: const EdgeInsets.only(top: 130, left: 20, right: 20, bottom: 20),
             child:Column(
@@ -489,9 +443,8 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Action cards
                 GestureDetector(
-                  onTap: () {
-                    Navigator.pushNamed(context, '/detect');
-                  },
+                  onTap: () => Navigator.pushNamed(context, '/detect');
+                  
                   child: const SizedBox(
                     width: double.infinity,
                     child: HoverCard(
@@ -523,8 +476,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-              ],
-            ),
+              
+            
 
                   const SizedBox(height: 30),
 
