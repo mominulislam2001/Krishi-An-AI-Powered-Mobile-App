@@ -35,7 +35,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'সয়াবিন / সবজি',
       'icon': '🍃',
       'color': const Color(0xFF2E7D32),
-      'imageUrl': 'assets/images/white_mould_soyabean1.jpg',
+      'imageUrl': 'assets/images/white_mould_soybean1.jpg',
       'cause': 'ছত্রাকের আক্রমণে এ রোগ হয়।',
       'symptoms': 'পাতার বোটায়, কাণ্ডে ও ফলে সাদা তুলার মত বস্তু দেখা যায়। আক্রান্ত অংশ পচে যায় এবং গাছ দুর্বল হয়ে পড়ে।',
       'management': [
