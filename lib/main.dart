@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'screens/home_screen.dart';
-import 'screens/advisory_screen.dart';
 import 'screens/disease_guidance_screen.dart';
 import 'screens/disease_detection_screen.dart';
 
