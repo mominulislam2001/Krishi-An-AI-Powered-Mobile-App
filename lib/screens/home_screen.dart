@@ -3,6 +3,8 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'disease_guidance_screen.dart';
 import 'preventive_screen.dart';
+import 'profile_screen.dart';
+import '../models/auth_store.dart';
 
 class WeatherData {
   final double tempC;
@@ -39,10 +41,10 @@ class WeatherData {
   }
 
   String? get alertMessage {
-    if (rainMm > 0)      return "বৃষ্টি হচ্ছে: আজ স্প্রে করবেন না";
-    if (humidity > 85)   return "অতিরিক্ত আর্দ্রতা: ছত্রাকের ঝুঁকি বেশি";
-    if (tempC > 38)      return "তাপমাত্রা অনেক বেশি: সেচ দেওয়া এড়ান";
-    if (windSpeed > 40)  return "তীব্র বাতাস: আজ স্প্রে করা ঠিক হবে না";
+    if (rainMm > 0.5)     return "বৃষ্টি হচ্ছে: আজ স্প্রে করবেন না";
+    if (humidity > 85)  return "অতিরিক্ত আর্দ্রতা: ছত্রাকের ঝুঁকি বেশি";
+    if (tempC > 38)     return "তাপমাত্রা অনেক বেশি: সেচ দেওয়া এড়ান";
+    if (windSpeed > 40) return "তীব্র বাতাস: আজ স্প্রে করা ঠিক হবে না";
     return null;
   }
 }
@@ -109,27 +111,16 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
-  Color _weatherColor(String condition) {
-    switch (condition.toLowerCase()) {
-      case 'clear':        return Colors.orange.shade400;
-      case 'rain':
-      case 'drizzle':
-      case 'thunderstorm': return Colors.blue.shade600;
-      case 'clouds':       return Colors.blueGrey.shade400;
-      default:             return Colors.lightBlue.shade400;
-    }
-  }
-
   // ── Weather card ────────────────────────────────────────────────────────────
   Widget _buildWeatherCard() {
     if (_loadingWeather) {
       return Container(
-        height: 110,
+        height: 50,
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
           boxShadow: [
-            BoxShadow(color: Colors.blue.withOpacity(0.08), blurRadius: 20)
+            BoxShadow(color: Colors.blue.withOpacity(0.08), blurRadius: 20),
           ],
         ),
         child: const Center(
@@ -140,22 +131,24 @@ class _HomeScreenState extends State<HomeScreen> {
 
     if (_weatherError != null || _weather == null) {
       return Container(
-        padding: const EdgeInsets.all(16),
+        height: 50,
+        padding: const EdgeInsets.symmetric(horizontal: 12),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(24),
+          borderRadius: BorderRadius.circular(14),
           border: Border.all(color: Colors.grey.shade200),
         ),
         child: Row(
           children: [
-            const Icon(Icons.cloud_off, color: Colors.grey),
-            const SizedBox(width: 12),
+            const Icon(Icons.cloud_off, color: Colors.grey, size: 18),
+            const SizedBox(width: 8),
             Text(_weatherError ?? 'আবহাওয়া তথ্য নেই',
-                style: const TextStyle(color: Colors.grey)),
+                style: const TextStyle(color: Colors.grey, fontSize: 13)),
             const Spacer(),
             TextButton(
-                onPressed: _loadWeather,
-                child: const Text("পুনরায় চেষ্টা")),
+              onPressed: _loadWeather,
+              child: const Text("পুনরায় চেষ্টা", style: TextStyle(fontSize: 12)),
+            ),
           ],
         ),
       );
@@ -163,75 +156,71 @@ class _HomeScreenState extends State<HomeScreen> {
 
     final w = _weather!;
     return Container(
-      padding: const EdgeInsets.all(18),
+      padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [Colors.blue.shade600, Colors.blue.shade400],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
         ),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
-              color: Colors.blue.withOpacity(0.25),
-              blurRadius: 20,
-              offset: const Offset(0, 8))
+            color: Colors.blue.withOpacity(0.25),
+            blurRadius: 20,
+            offset: const Offset(0, 6),
+          ),
         ],
       ),
       child: Column(
+        mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          // City + refresh
           Row(
             children: [
-              const Icon(Icons.location_on, color: Colors.white70, size: 16),
+              const Icon(Icons.location_on, color: Colors.white70, size: 14),
               const SizedBox(width: 4),
               Text(w.cityName,
                   style: const TextStyle(
-                      color: Colors.white70,
-                      fontSize: 13,
-                      fontWeight: FontWeight.w500)),
+                      color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w500)),
               const Spacer(),
               GestureDetector(
                 onTap: _loadWeather,
-                child: const Icon(Icons.refresh, color: Colors.white70, size: 20),
+                child: const Icon(Icons.refresh, color: Colors.white70, size: 18),
               ),
             ],
           ),
-          const SizedBox(height: 12),
+          const SizedBox(height: 6),
+          // Temp + icon + description
           Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Text("${w.tempC.toStringAsFixed(1)}°C",
                   style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 42,
+                      fontSize: 36,
                       fontWeight: FontWeight.bold,
                       height: 1)),
-              const SizedBox(width: 12),
+              const SizedBox(width: 10),
               Container(
-                padding: const EdgeInsets.all(10),
+                padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
-                    color: Colors.white.withOpacity(0.2),
-                    shape: BoxShape.circle),
-                child: Icon(_weatherIcon(w.condition),
-                    color: Colors.white, size: 32),
+                  color: Colors.white.withOpacity(0.2),
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(_weatherIcon(w.condition), color: Colors.white, size: 24),
               ),
               const Spacer(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                children: [
-                  Text(w.description,
-                      style: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 13,
-                          fontWeight: FontWeight.w500)),
-                ],
-              ),
+              Text(w.description,
+                  style: const TextStyle(
+                      color: Colors.white, fontSize: 12, fontWeight: FontWeight.w500)),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 8),
           const Divider(color: Colors.white24, height: 1),
-          const SizedBox(height: 12),
+          const SizedBox(height: 8),
+          // Stats row
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             children: [
@@ -260,79 +249,119 @@ class _HomeScreenState extends State<HomeScreen> {
     required String value,
   }) {
     return Column(
+      mainAxisSize: MainAxisSize.min,
       children: [
-        Icon(icon, color: Colors.white70, size: 20),
-        const SizedBox(height: 4),
+        Icon(icon, color: Colors.white70, size: 18),
+        const SizedBox(height: 2),
         Text(value,
             style: const TextStyle(
-                color: Colors.white,
-                fontSize: 13,
-                fontWeight: FontWeight.bold)),
+                color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
         Text(label,
-            style: const TextStyle(color: Colors.white60, fontSize: 11)),
+            style: const TextStyle(color: Colors.white60, fontSize: 10)),
       ],
     );
   }
 
   // ── Alert banner ────────────────────────────────────────────────────────────
   Widget _buildAlertBanner() {
-    final alertMsg =
-        _weather?.alertMessage ?? "জরুরি সতর্কতা: আজ স্প্রে করবেন না";
-    final bool isWeatherAlert = _weather?.alertMessage != null;
+  // Don't show anything while weather is still loading
+  if (_loadingWeather) return const SizedBox.shrink();
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(color: Colors.red.withOpacity(0.08), blurRadius: 20)
-        ],
-        border: Border.all(
-            color: isWeatherAlert
-                ? Colors.orange.shade200
-                : Colors.red.shade100),
-      ),
-      child: Row(
-        children: [
-          CircleAvatar(
-            radius: 14,
-            backgroundColor: isWeatherAlert ? Colors.orange : Colors.red,
-            child: Icon(
-              isWeatherAlert
-                  ? Icons.wb_cloudy_rounded
-                  : Icons.notifications_active,
-              color: Colors.white,
-              size: 16,
-            ),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              alertMsg,
-              style: TextStyle(
-                color: isWeatherAlert
-                    ? Colors.orange.shade800
-                    : Colors.red.shade700,
-                fontWeight: FontWeight.bold,
-                fontSize: 13,
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
+  final String? alertMsg = _weather?.alertMessage;
+  final bool hasAlert = alertMsg != null;
+
+  // Pick color/icon based on which threshold was triggered
+  final Color borderColor;
+  final Color bgShadowColor;
+  final Color iconBg;
+  final Color textColor;
+  final IconData icon;
+
+  if (!hasAlert) {
+    // ✅ All clear — green
+    borderColor   = Colors.green.shade200;
+    bgShadowColor = Colors.green;
+    iconBg        = Colors.green.shade600;
+    textColor     = Colors.green.shade800;
+    icon          = Icons.check_circle_outline_rounded;
+  } else if (_weather!.rainMm > 0) {
+    // 🌧 Rain — blue
+    borderColor   = Colors.blue.shade200;
+    bgShadowColor = Colors.blue;
+    iconBg        = Colors.blue.shade600;
+    textColor     = Colors.blue.shade800;
+    icon          = Icons.grain_rounded;
+  } else if (_weather!.humidity > 85) {
+    // 💧 High humidity — orange
+    borderColor   = Colors.orange.shade200;
+    bgShadowColor = Colors.orange;
+    iconBg        = Colors.orange.shade700;
+    textColor     = Colors.orange.shade900;
+    icon          = Icons.water_drop_rounded;
+  } else if (_weather!.tempC > 38) {
+    // 🌡 High temp — deep orange
+    borderColor   = Colors.deepOrange.shade200;
+    bgShadowColor = Colors.deepOrange;
+    iconBg        = Colors.deepOrange.shade600;
+    textColor     = Colors.deepOrange.shade900;
+    icon          = Icons.thermostat_rounded;
+  } else {
+    // 💨 High wind — purple
+    borderColor   = Colors.purple.shade200;
+    bgShadowColor = Colors.purple;
+    iconBg        = Colors.purple.shade600;
+    textColor     = Colors.purple.shade900;
+    icon          = Icons.air_rounded;
   }
+
+  return Container(
+    width: double.infinity,
+    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(16),
+      boxShadow: [
+        BoxShadow(color: bgShadowColor.withOpacity(0.08), blurRadius: 12),
+      ],
+      border: Border.all(color: borderColor),
+    ),
+    child: Row(
+      children: [
+        CircleAvatar(
+          radius: 13,
+          backgroundColor: iconBg,
+          child: Icon(icon, color: Colors.white, size: 12),
+        ),
+        const SizedBox(width: 5),
+        Expanded(
+          child: Text(
+            hasAlert ? alertMsg : "আবহাওয়া অনুকূল: কৃষিকাজ করার উপযুক্ত সময়",
+            style: TextStyle(
+              color: textColor,
+              fontWeight: FontWeight.bold,
+              fontSize: 12,
+            ),
+          ),
+        ),
+      ],
+    ),
+  );
+}
 
   // ── Build ───────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
+    final user = AuthStore.currentUser;
+    final userName = (user?['name'] as String? ?? '').isNotEmpty
+        ? user!['name'] as String
+        : 'কৃষক';
+
     return Scaffold(
       backgroundColor: const Color(0xFFF0F4F0),
 
+      // ── Bottom nav ──────────────────────────────────────────────────────────
       bottomNavigationBar: Container(
-        margin: const EdgeInsets.all(20),
+        margin: const EdgeInsets.all(16),
         height: 55,
         decoration: BoxDecoration(
           color: Colors.white,
@@ -349,167 +378,181 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: [
             const _HoverNavIcon(icon: Icons.home_rounded, isActive: true),
+
             GestureDetector(
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PreventiveScreen(),
-                  ),
-                );
-              },
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  // ✅ Pass the already-fetched weather so the corrective
+                  //    screen doesn't make a second API call.
+                  builder: (_) => PreventiveScreen(weather: _weather),
+                ),
+              ),
               child: const _HoverNavIcon(icon: Icons.info_outline_rounded),
             ),
-            const _HoverNavIcon(icon: Icons.person_outline_rounded),
+           GestureDetector(
+              onTap: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (_) => const ProfileScreen())),
+              child: const _HoverNavIcon(icon: Icons.person_outline_rounded),
+            ),
           ],
         ),
       ),
 
-      body: Stack(
-        children: [
-          // ── Header gradient ──────────────────────────────────────────────
-          Container(
-            height: 120,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Colors.green.shade800, Colors.green.shade500],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: const BorderRadius.only(
-                bottomLeft: Radius.circular(40),
-                bottomRight: Radius.circular(40),
-              ),
-            ),
-            child: Align(
-              alignment: Alignment.topLeft,
-              child: Padding(
-                padding: const EdgeInsets.all(16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Image.asset(
-                          'assets/images/logo.png',
-                          height: 60,
-                          width: 60,
-                        ),
-                        const SizedBox(width: 12),
-                        const Text(
-                          "কৃষি",
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 36,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 6),
-                    const Text(
-                      "আপনার ফসলের জন্য সেরা পরামর্শ",
-                      style: TextStyle(color: Colors.white70),
-                    ),
-                  ],
+      // ── Body: SafeArea → Column (no scroll ever) ────────────────────────────
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+
+            // ── Header ──────────────────────────────────────────────────────
+            Container(
+              height: 100,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [const Color.fromARGB(255, 72, 164, 77), const Color.fromARGB(255, 91, 197, 94)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ),
+                borderRadius: const BorderRadius.only(
+                  bottomLeft: Radius.circular(36),
+                  bottomRight: Radius.circular(36),
                 ),
               ),
-            ),
-          ),
-
-          // ── Scrollable content ───────────────────────────────────────────
-          SingleChildScrollView(
-            padding: const EdgeInsets.only(top: 130, left: 20, right: 20, bottom: 20),
-            child: Column(
-              children: [
-                // Weather card
-                _buildWeatherCard(),
-
-                const SizedBox(height: 16),
-
-                // Alert banner (driven by weather data)
-                _buildAlertBanner(),
-
-                const SizedBox(height: 30),
-
-                // Action cards
-                GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/detect'),
-                  child: const SizedBox(
-                    width: double.infinity,
-                    child: HoverCard(
-                      title: "রোগ শনাক্তকরণ",
-                      icon: Icons.camera_rounded,
-                      color: Colors.orange,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 13),
-
-                GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const DiseaseGuidanceScreen(),
-                      ),
-                    );
-                  },
-                  child: const SizedBox(
-                    width: double.infinity,
-                    child: HoverCard(
-                      title: "জ্ঞানভান্ডার",
-                      icon: Icons.menu_book_rounded,
-                      color: Colors.brown,
-                    ),
-                  ),
-                ),
-
-                const SizedBox(height: 30),
-
-                // Today's tips
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Text(
-                    "আজকের টিপস",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.green.shade900,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Container(
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(20),
-                    border: Border.all(color: Colors.green.shade100),
-                  ),
-                  child: const Row(
+              padding: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+              child: Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.lightbulb_outline,
-                        color: Colors.orange,
-                        size: 25,
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Image.asset(
+                            'assets/images/Krishi_trans_logo.png',
+                            height: 65,
+                            width: 58,
+                          ),
+                          const SizedBox(width: 10),
+                          const Text(
+                            "কৃষি",
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ],
                       ),
-                      SizedBox(width: 15),
-                      Expanded(
-                        child: Text(
-                          "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
+                      const SizedBox(height: 4),
+                      const Text(
+                        "আপনার ফসলের জন্য সেরা পরামর্শ",
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 11,
                         ),
                       ),
                     ],
                   ),
                 ),
+              ),
+            
 
-                const SizedBox(height: 20),
-              ],
+            // ── All cards expand to fill remaining space exactly ─────────────
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+
+                    // Weather card (fixed intrinsic height)
+                    _buildWeatherCard(),
+
+                    const SizedBox(height: 10),
+
+                    // Alert banner (fixed intrinsic height)
+                    _buildAlertBanner(),
+
+                    const SizedBox(height: 12),
+
+                    // Disease detection — flex
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.pushNamed(context, '/detect'),
+                        child: const HoverCard(
+                          title: "রোগ শনাক্তকরণ",
+                          icon: Icons.camera_rounded,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 10),
+
+                    // Knowledge base — flex
+                    Expanded(
+                      child: GestureDetector(
+                        onTap: () => Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (_) => const DiseaseGuidanceScreen()),
+                        ),
+                        child: const HoverCard(
+                          title: "জ্ঞানভান্ডার",
+                          icon: Icons.menu_book_rounded,
+                          color: Colors.brown,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+
+                    // Tips label
+                    Text(
+                      "আজকের টিপস",
+                      style: TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.green.shade900,
+                      ),
+                    ),
+                    const SizedBox(height: 6),
+
+                    // Tips card — flex
+                    Expanded(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 10),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: Colors.green.shade100),
+                        ),
+                        child: Row(
+                          children: const [
+                            Icon(Icons.lightbulb_outline,
+                                color: Colors.orange, size: 22),
+                            SizedBox(width: 12),
+                            Expanded(
+                              child: Text(
+                                "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
+                                maxLines: 2,
+                                overflow: TextOverflow.ellipsis,
+                                style: TextStyle(fontSize: 13),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -546,9 +589,8 @@ class _WideHoverCardState extends State<WideHoverCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         width: double.infinity,
-        height: 90,
         transform: isHovered
-            ? Matrix4.translationValues(0, -6, 0)
+            ? Matrix4.translationValues(0, -4, 0)
             : Matrix4.identity(),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -557,7 +599,7 @@ class _WideHoverCardState extends State<WideHoverCard> {
             BoxShadow(
               color: widget.color.withOpacity(isHovered ? 0.25 : 0.08),
               blurRadius: isHovered ? 25 : 15,
-              offset: const Offset(0, 10),
+              offset: const Offset(0, 8),
             ),
           ],
         ),
@@ -565,20 +607,20 @@ class _WideHoverCardState extends State<WideHoverCard> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
-              scale: isHovered ? 1.15 : 1.0,
+              scale: isHovered ? 1.12 : 1.0,
               duration: const Duration(milliseconds: 250),
               child: CircleAvatar(
-                radius: 28,
+                radius: 24,
                 backgroundColor: widget.color.withOpacity(0.15),
-                child: Icon(widget.icon, color: widget.color, size: 30),
+                child: Icon(widget.icon, color: widget.color, size: 26),
               ),
             ),
-            const SizedBox(width: 16),
+            const SizedBox(width: 14),
             Text(
               widget.title,
               style: TextStyle(
                 fontWeight: FontWeight.bold,
-                fontSize: 16,
+                fontSize: 15,
                 color: widget.color,
               ),
             ),
@@ -616,7 +658,7 @@ class _HoverCardState extends State<HoverCard> {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 250),
         transform: isHovered
-            ? Matrix4.translationValues(0, -6, 0)
+            ? Matrix4.translationValues(0, -4, 0)
             : Matrix4.identity(),
         decoration: BoxDecoration(
           color: Colors.white,
@@ -625,27 +667,26 @@ class _HoverCardState extends State<HoverCard> {
             BoxShadow(
               color: widget.color.withOpacity(isHovered ? 0.25 : 0.08),
               blurRadius: isHovered ? 25 : 15,
-              offset: const Offset(0, 10),
+              offset: const Offset(0, 8),
             ),
           ],
         ),
-        child: Column(
+        child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             AnimatedScale(
-              scale: isHovered ? 1.15 : 1.0,
+              scale: isHovered ? 1.12 : 1.0,
               duration: const Duration(milliseconds: 250),
               child: CircleAvatar(
-                radius: 18,
+                radius: 20,
                 backgroundColor: widget.color.withOpacity(0.15),
-                child: Icon(widget.icon, color: widget.color, size: 28),
+                child: Icon(widget.icon, color: widget.color, size: 24),
               ),
             ),
-            const SizedBox(height: 10),
+            const SizedBox(width: 12),
             Text(
               widget.title,
-              textAlign: TextAlign.center,
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
             ),
           ],
         ),
