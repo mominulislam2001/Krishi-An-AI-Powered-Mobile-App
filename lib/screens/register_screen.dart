@@ -88,7 +88,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                   Icon(Icons.agriculture, color: Colors.white, size: 44),
                   SizedBox(height: 8),
                   Text(
-                    "কৃষি সহায়তা",
+                    "কৃষি",
                     style: TextStyle(
                         color: Colors.white,
                         fontSize: 24,
