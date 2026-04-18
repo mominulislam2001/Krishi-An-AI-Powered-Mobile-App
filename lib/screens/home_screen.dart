@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'advisory_screen.dart';
 import 'disease_guidance_screen.dart';
 import 'preventive_screen.dart';
 
@@ -391,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        'images/Krishi_trans_logo.png',
+                        'assets/images/logo.png',
                         height: 60,
                         width: 60,
                       ),
