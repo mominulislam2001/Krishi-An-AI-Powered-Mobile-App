@@ -443,7 +443,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
                 // Action cards
                 GestureDetector(
-                  onTap: () => Navigator.pushNamed(context, '/detect');
+                  onTap: () => Navigator.pushNamed(context, '/detect'),
                   
                   child: const SizedBox(
                     width: double.infinity,
