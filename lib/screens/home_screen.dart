@@ -392,7 +392,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     children: [
                       Image.asset(
-                        'assets/images/logo.png',
+                        'images/Krishi_trans_logo.png',
                         height: 60,
                         width: 60,
                       ),
