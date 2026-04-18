@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'advisory_screen.dart';
 import 'disease_guidance_screen.dart';
 import 'preventive_screen.dart';
-
 
 class WeatherData {
   final double tempC;
@@ -325,8 +325,8 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-// ── Build
 
+  // ── Build ───────────────────────────────────────────────────────────────────
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -368,6 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
       body: Stack(
         children: [
+          // ── Header gradient ──────────────────────────────────────────────
           Container(
             height: 120,
             decoration: BoxDecoration(
@@ -381,54 +382,46 @@ class _HomeScreenState extends State<HomeScreen> {
                 bottomRight: Radius.circular(40),
               ),
             ),
-           child: Align(
-            alignment: Alignment.topLeft, // 👈 move everything top-left
-            child: Padding(
-              padding: const EdgeInsets.all(16), // spacing from edges
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Image.asset(
-                        'assets/images/logo.png',
-                        height: 60,
-                        width: 60,
-                      ),
-
-                      const SizedBox(width: 12),
-
-                      const Text(
-                        "কৃষি",
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontSize: 36,
-                          fontWeight: FontWeight.bold,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Image.asset(
+                          'assets/images/logo.png',
+                          height: 60,
+                          width: 60,
                         ),
-                      ),
-                    ],
-                  ),
-
-                  const SizedBox(height: 6),
-
-                  const Text(
-                    "আপনার ফসলের জন্য সেরা পরামর্শ",
-                    style: TextStyle(color: Colors.white70),
-                  ),
-                ],
-              ),     
+                        const SizedBox(width: 12),
+                        const Text(
+                          "কৃষি",
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 36,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 6),
+                    const Text(
+                      "আপনার ফসলের জন্য সেরা পরামর্শ",
+                      style: TextStyle(color: Colors.white70),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
-         ),
 
-        
-
-                  
-
-              // Full-width Disease Detection card
-            SingleChildScrollView(
+          // ── Scrollable content ───────────────────────────────────────────
+          SingleChildScrollView(
             padding: const EdgeInsets.only(top: 130, left: 20, right: 20, bottom: 20),
-            child:Column(
+            child: Column(
               children: [
                 // Weather card
                 _buildWeatherCard(),
@@ -443,7 +436,6 @@ class _HomeScreenState extends State<HomeScreen> {
                 // Action cards
                 GestureDetector(
                   onTap: () => Navigator.pushNamed(context, '/detect'),
-                  
                   child: const SizedBox(
                     width: double.infinity,
                     child: HoverCard(
@@ -461,8 +453,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) =>
-                            const DiseaseGuidanceScreen(),
+                        builder: (context) => const DiseaseGuidanceScreen(),
                       ),
                     );
                   },
@@ -475,57 +466,59 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                 ),
-              
-            
 
-                  const SizedBox(height: 30),
+                const SizedBox(height: 30),
 
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      "আজকের টিপস",
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.green.shade900,
+                // Today's tips
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "আজকের টিপস",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.green.shade900,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                Container(
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(20),
+                    border: Border.all(color: Colors.green.shade100),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(
+                        Icons.lightbulb_outline,
+                        color: Colors.orange,
+                        size: 25,
                       ),
-                    ),
-                  ),
-                  const SizedBox(height: 10),
-                  Container(
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(20),
-                      border: Border.all(color: Colors.green.shade100),
-                    ),
-                    child: const Row(
-                      children: [
-                        Icon(
-                          Icons.lightbulb_outline,
-                          color: Colors.orange,
-                          size: 25,
+                      SizedBox(width: 15),
+                      Expanded(
+                        child: Text(
+                          "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
                         ),
-                        SizedBox(width: 15),
-                        Expanded(
-                          child: Text(
-                            "ধানের জমিতে সঠিক সময়ে ইউরিয়া সার প্রয়োগ করলে ফলন ২০% বৃদ্ধি পায়।",
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                    ],
                   ),
+                ),
 
-                  const SizedBox(height: 100),
-                ],
-              ),
+                const SizedBox(height: 20),
+              ],
             ),
-          
+          ),
         ],
       ),
     );
   }
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Reusable widgets
+// ─────────────────────────────────────────────────────────────────────────────
 
 class WideHoverCard extends StatefulWidget {
   final String title;
