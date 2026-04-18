@@ -102,7 +102,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'মসুর / ডাল',
       'icon': '🌿',
       'color': const Color(0xFF00695C),
-      'imageUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b3/Agromyzid_fly.jpg/640px-Agromyzid_fly.jpg',
+      'imageUrl': 'assets/images/moshurer_stem_fly.jpg',
       'cause': 'Melanagromyza sojae পোকার আক্রমণে এ রোগ হয়।',
       'symptoms': 'আক্রান্ত গাছের কান্ড হলুদ হয়ে শুকিয়ে যায়। কান্ড কেটে দেখলে ভেতরে পোকার সুড়ঙ্গ দেখা যায়। চারা অবস্থায় আক্রমণ হলে গাছ মারা যায়।',
       'management': [
@@ -124,7 +124,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'গম',
       'icon': '🌱',
       'color': const Color(0xFFE65100),
-      'imageUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4e/Wheat_leaf_rust.jpg/640px-Wheat_leaf_rust.jpg',
+      'imageUrl': 'assets/images/gomer_moricha.jpeg',
       'cause': 'Puccinia triticina ছত্রাক দ্বারা পাতার মরিচা এবং Puccinia graminis দ্বারা কান্ডের মরিচা হয়।',
       'symptoms': 'পাতায় ও কান্ডে মরিচার মতো কমলা-লাল বা কালো গুঁড়া দেখা যায়। আক্রান্ত পাতা হলুদ হয়ে শুকিয়ে যায়। দানা চিটা হয়ে ফলন কমে যায়।',
       'management': [
@@ -145,7 +145,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'টমেটো / সবজি',
       'icon': '🍅',
       'color': const Color(0xFFC62828),
-      'imageUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Alternaria_solani_on_tomato.jpg/640px-Alternaria_solani_on_tomato.jpg',
+      'imageUrl': 'assets/images/tomato_early_blight.jpg',
       'cause': 'Alternaria solani ছত্রাক দ্বারা এ রোগ হয়।',
       'symptoms': 'পুরনো পাতায় বাদামি গোলাকার দাগ পড়ে, যার কেন্দ্রে কালো বলয় থাকে। আক্রমণ বাড়লে পাতা ঝরে পড়ে। ফলেও কালো দাগ পড়ে।',
       'management': [
