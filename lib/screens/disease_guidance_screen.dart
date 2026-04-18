@@ -58,7 +58,7 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
       'cropTag': 'ধান',
       'icon': '🌾',
       'color': const Color(0xFF558B2F),
-      'imageUrl': 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/8e/Rice_blast_lesions.jpg/640px-Rice_blast_lesions.jpg',
+      'imageUrl': 'assets/images/dhaner_blast_rog.jpg',
       'cause': 'Magnaporthe oryzae ছত্রাক দ্বারা এ রোগ হয়।',
       'symptoms': 'পাতায় চোখের মতো বা মাকু আকৃতির বাদামি দাগ পড়ে। দাগের কেন্দ্র ধূসর-সাদা এবং কিনারা বাদামি রঙের হয়। ঘাড় পচে গেলে শীষ ভেঙে পড়ে।',
       'management': [
