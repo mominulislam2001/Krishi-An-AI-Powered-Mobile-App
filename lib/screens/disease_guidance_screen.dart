@@ -118,7 +118,6 @@ class _DiseaseGuidanceScreenState extends State<DiseaseGuidanceScreen> {
   String _searchQuery = '';
   String _selectedCrop = 'সব';
 
-  // ✅ Google Cloud TTS (no separate file needed)
   final GoogleCloudTtsService _ttsService = GoogleCloudTtsService();
   bool _isPlaying = false;
   bool _isAudioMode = false;
