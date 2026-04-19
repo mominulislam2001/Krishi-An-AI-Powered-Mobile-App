@@ -318,7 +318,7 @@ class _SplashScreenState extends State<SplashScreen>
               child: Column(
                 children: [
                   Text(
-                    "Powered by Anthropic Claude AI",
+                    "Powered by MAD Lab",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.45),
@@ -328,7 +328,7 @@ class _SplashScreenState extends State<SplashScreen>
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    "© 2025 কৃষি সহায়তা",
+                    "© 2025 কৃষি",
                     textAlign: TextAlign.center,
                     style: TextStyle(
                       color: Colors.white.withOpacity(0.3),
